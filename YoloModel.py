@@ -13,10 +13,10 @@ class YoloModel:
         """
         torch.cuda.current_device()
         torch.cuda._initialized = True
-        model = torch.hub.load(git_hub, name, pretrained=True, verbose=False)
+        model = torch.hub.load('WongKinYiu/yolov7', 'custom', 'yolov7x.pt', verbose=False) # , pretrained=True
         self.model = model
         self.model.classes = [2, 3, 5, 7]  # 0 person, 2 car, 3 motorcycle, 5 bus, 7 truck
-        self.classes = self.model.names  # todo je potrebne??
+        self.classes = self.model.names  # todo is this necessary??
 
     def score_frame(self, frame):
         self.model.to(self.device)

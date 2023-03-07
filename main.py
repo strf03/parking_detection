@@ -1,4 +1,4 @@
-import ParkingPlacesCreator
+from ParkingPlacesCreator import ParkingPlacesCreator
 from ObjectDetection import ObjectDetection
 
 from fastapi import Request, FastAPI
@@ -6,7 +6,7 @@ import uvicorn
 from threading import Thread
 
 app = FastAPI()
-object_detection = ObjectDetection('windows', 'rtsp://192.168.0.100:5000/screen')
+object_detection = ObjectDetection('window', 'rtsp://tapoadmin:tapopassword123@10.10.120.46:554/stream1')
 
 
 @app.get("/")
@@ -35,20 +35,20 @@ async def get_spot(spot_id: int):
         "Id": parking_spot.get_id(),
         "Occupied": parking_spot.is_occupied(),
         "Color": parking_spot.get_color(),
-        "Handicaped": parking_spot.is_handicapped()
+        "Handicapped": parking_spot.is_handicapped()
     }
 
 
 @app.post("/api/lot/add")
 async def add_spot(request: Request):
     json_request = await request.json()
-    print(json_request['spot_id'])
     parking_spot = object_detection.parking_lot.get_parking_spot(json_request['spot_id'])
-    if parking_spot is not None:
+    if parking_spot is not None: # todo what if coordinates or other information missing
         return {"Parking spot with id " + str(json_request['spot_id']) + " already exists"}
     object_detection.parking_lot.add_parking_spot(json_request['spot_id'],
                                                   json_request['coordinates'],
-                                                  json_request['handicapped'])
+                                                  json_request['handicapped'],
+                                                  json_request['valid'])
     return {
         "Result": "successfully added",
     }
@@ -61,7 +61,7 @@ async def delete_spot(spot_id: int):
         return {"Parking spot with id " + str(spot_id) + " does not exist"}
     object_detection.parking_lot.delete_parking_spot(spot_id)
     return {
-        "Results": "Successfully deleted",
+        "Result": "Successfully deleted",
     }
 
 
@@ -79,5 +79,4 @@ if __name__ == '__main__':
 
     t1.start()
     t2.start()
-
-# ParkingPlacesCreator.ObjectDetection().start('rtsp://192.168.0.100:5000/screen')
+    # ParkingPlacesCreator('rtsp://tapoadmin:tapopassword123@10.10.120.46:554/stream1').start()
