@@ -23,6 +23,11 @@ class ParkingSpot:
         return self.occupied
 
     def set_occupied(self, is_occupied):
+        """
+        Sets parking spot as occupied, changes color
+        :param is_occupied:
+        :return:
+        """
         self.occupied = is_occupied
         self.color = OCCUPIED_PARKING_SPOT_COLOR if is_occupied else FREE_PARKING_SPOT_COLOR
         if self.handicapped and not self.occupied:
@@ -47,3 +52,6 @@ class ParkingSpot:
 
     def is_handicapped(self):
         return self.handicapped
+
+    def is_valid(self):
+        return self.valid

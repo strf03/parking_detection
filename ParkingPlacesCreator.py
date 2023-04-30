@@ -14,8 +14,8 @@ ASCII_S = 115
 ASCII_I = 105
 ASCII_D = 100
 
-WIDTH = 440
-HEIGHT = 100
+WIDTH = 1498
+HEIGHT = 720
 
 INITIAL_PARKING_SPOT_ARRAY = [{'id': 1, 'coordinates': [], 'handicapped': False, 'valid': True}]
 
@@ -25,13 +25,18 @@ class ParkingPlacesCreator:
         self.window_name = 'window'
         self.done = False
         self.current = [0, 0]
-        self.parking_spots = INITIAL_PARKING_SPOT_ARRAY  # todo add is_occupied
+        self.parking_spots = INITIAL_PARKING_SPOT_ARRAY
         self.link = link
-        self.model = YoloModel('ultralytics/yolov5', 'yolov5m')
-        self.plotting_manager = PlottingManager(1498, 720)  # todo constant
+        self.model = YoloModel()
+        self.plotting_manager = PlottingManager(WIDTH, HEIGHT)
         self.cords = []
 
     def plot_parking_spots(self, frame):
+        """
+        Plot parking spots into fram
+        :param frame:
+        :return: frame
+        """
         if len(self.parking_spots) > 0:
             for parking_spot in self.parking_spots:
                 if len(parking_spot["coordinates"]) == 4:
@@ -46,9 +51,13 @@ class ParkingPlacesCreator:
         return frame
 
     def delete_last_rect(self):
+        """
+        Deletes the most recently created parking spot
+        :return:
+        """
         self.parking_spots.pop(-1)
         if len(self.parking_spots) == 0:
-            self.parking_spots = INITIAL_PARKING_SPOT_ARRAY
+            self.parking_spots = [{'id': 1, 'coordinates': [], 'handicapped': False, 'valid': True}]
 
     def on_mouse(self, event, x, y, buttons, user_param):
         if self.done:
@@ -61,12 +70,17 @@ class ParkingPlacesCreator:
             new_parking_spot = {'id': parking_spot_id, 'coordinates': [[x, y]], 'handicapped': False, 'valid': True}
             if len(self.parking_spots[-1]['coordinates']) == 4:
                 self.parking_spots.append(new_parking_spot)
+                print('-------')
+                print(self.parking_spots[-1])
             else:
                 self.parking_spots[-1]['coordinates'].append([x, y])
-
-            print(self.parking_spots)
+                print(self.parking_spots[-1])
 
     def start(self):
+        """
+        Starts whole process of creating parking places
+        :return:
+        """
         if self.link:
             cap = cv2.VideoCapture(self.link)
             cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
@@ -82,7 +96,7 @@ class ParkingPlacesCreator:
         while True:
             curr_time = time.time()
             ret, frame = cap.read()
-            frame = cv2.resize(frame, (1498, 720))
+            frame = cv2.resize(frame, (WIDTH, HEIGHT))
             frame[HEIGHT:WIDTH, :] = 0  # black stripe
             if curr_time - last_recorded_time_score_frame >= 2.0:  # score frame every 2 seconds
                 self.cords = self.model.score_frame(frame)
@@ -105,11 +119,19 @@ class ParkingPlacesCreator:
         cv2.destroyAllWindows()
 
     def save_to_json(self):
-        print('Saving to JSON...')
-        with open('final_kunratice_real.json', 'w') as f:
+        """
+        Saves parking spot to json
+        :return:
+        """
+        print('Saving to parking_lot.json...')
+        with open('parking_lot.json', 'w') as f:
             json.dump(self.parking_spots, f, indent=4)
 
     def interrupt_drawing(self):
+        """
+        Interrupts drawing
+        :return:
+        """
         if len(self.parking_spots[-1]['coordinates']) != 4:
             self.parking_spots.pop(-1)
         if len(self.parking_spots) == 0:

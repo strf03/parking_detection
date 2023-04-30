@@ -31,7 +31,9 @@ class PlottingManager:
                           parking_spot.get_color(), 1)
             parking_spot_poly = Polygon(parking_spot.get_coordinates())
             centroid = parking_spot_poly.centroid
-            cv2.circle(frame, (round(centroid.x), round(centroid.y)), 5, parking_spot.get_color(), -1)
+            # cv2.circle(frame, (round(centroid.x), round(centroid.y)), 5, parking_spot.get_color(), -1)
+            cv2.putText(frame, str(parking_spot.get_id()), (round(centroid.x)-10, round(centroid.y)), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, parking_spot.get_color(), 3)
         return frame
 
     def preprocess_image(self, frame):

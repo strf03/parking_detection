@@ -20,9 +20,9 @@ async def general_info():
     occupied_spots = object_detection.parking_lot.get_occupied_count()
     free_spots = all_spots - occupied_spots
     return {
-        "All parking spots": all_spots,
-        "Free parking spots": free_spots,
-        "Occupied parking spots": occupied_spots,
+        "all": all_spots,
+        "free": free_spots,
+        "occupied": occupied_spots,
     }
 
 
@@ -35,7 +35,8 @@ async def get_spot(spot_id: int):
         "Id": parking_spot.get_id(),
         "Occupied": parking_spot.is_occupied(),
         "Color": parking_spot.get_color(),
-        "Handicapped": parking_spot.is_handicapped()
+        "Handicapped": parking_spot.is_handicapped(),
+        "Valid": parking_spot.is_valid()
     }
 
 
@@ -74,9 +75,9 @@ def run_detection():
 
 
 if __name__ == '__main__':
-    t1 = Thread(target=run_server)
-    t2 = Thread(target=run_detection)
+    #t1 = Thread(target=run_server)
+    #t2 = Thread(target=run_detection)
 
-    t1.start()
-    t2.start()
-    # ParkingPlacesCreator('rtsp://tapoadmin:tapopassword123@10.10.120.46:554/stream1').start()
+    #t1.start()
+    #t2.start()
+    ParkingPlacesCreator('rtsp://tapoadmin:tapopassword123@10.10.120.46:554/stream1').start()
