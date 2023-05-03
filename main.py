@@ -1,4 +1,4 @@
-from ParkingPlacesCreator import ParkingPlacesCreator
+# from ParkingPlacesCreator import ParkingPlacesCreator
 from ObjectDetection import ObjectDetection
 
 from fastapi import Request, FastAPI
@@ -75,9 +75,9 @@ def run_detection():
 
 
 if __name__ == '__main__':
-    #t1 = Thread(target=run_server)
-    #t2 = Thread(target=run_detection)
+    t1 = Thread(target=run_server)
+    t2 = Thread(target=run_detection)
 
-    #t1.start()
-    #t2.start()
-    ParkingPlacesCreator('rtsp://tapoadmin:tapopassword123@10.10.120.46:554/stream1').start()
+    t1.start()
+    t2.start()
+    # ParkingPlacesCreator('rtsp://tapoadmin:tapopassword123@10.10.120.46:554/stream1').start()
